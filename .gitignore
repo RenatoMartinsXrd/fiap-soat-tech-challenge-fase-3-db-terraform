@@ -1,1 +1,49 @@
-terraform.tfvars
+# Diretório local do Terraform
+**/.terraform/*
+
+# Arquivos de estado do Terraform
+**/*.tfstate
+**/*.tfstate.*
+
+# Arquivos de bloqueio do Terraform
+**/.terraform.tfstate.lock.info
+**/.terraform.lock.hcl
+
+# Arquivos de log de crash do Terraform
+**/crash.log
+**/crash.*.log
+
+# Arquivos que podem conter dados sensíveis (ex.: chaves privadas, senhas)
+**/*.tfvars
+**/*.tfvars.json
+
+# Arquivos de substituição local do Terraform (overrides)
+**/override.tf
+**/override.tf.json
+**/*_override.tf
+**/*_override.tf.json
+
+# Arquivos de saída do plano do Terraform
+**/*.tfplan
+
+# Configuração local do Terraform
+**/.terraformrc
+**/terraform.rc
+
+# Diretórios e arquivos do IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+out/
+
+# Arquivos gerados de build (caso seu projeto envolva código compilado)
+target/
+bin/
+build/
+
+# Arquivos de sistema do macOS e Linux
+.DS_Store
+*.swp
+*.swo
+*.bak
+*.orig
