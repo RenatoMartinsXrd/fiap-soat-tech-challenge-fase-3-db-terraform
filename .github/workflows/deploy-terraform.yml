@@ -26,6 +26,45 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1  # Ajuste para sua região
 
+jobs:
+  terraform:
+    name: Apply Terraform
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Código
+        uses: actions/checkout@v4
+
+      - name: Configurar AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1  # Ajuste para sua região
+          
+      - name: Definir variáveis para Terraform
+        run: |
+          echo "DB_USERNAME=${{ secrets.TF_VAR_DB_USERNAME }}" >> $GITHUB_ENV
+          echo "DB_PASSWORD=${{ secrets.TF_VAR_DB_PASSWORD }}" >> $GITHUB_ENV
+
+      - name: Instalar Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: latest
+
+      - name: Inicializar Terraform
+        run: terraform init
+
+      - name: Validar Terraform
+        run: terraform validate
+
+      - name: Planejar Terraform
+        run: terraform plan
+
+      - name: Aplicar Terraform
+        run: terraform apply -auto-approve
+
+
       - name: Instalar Terraform
         uses: hashicorp/setup-terraform@v3
         with:
