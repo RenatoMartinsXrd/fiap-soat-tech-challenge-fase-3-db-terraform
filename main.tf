@@ -56,8 +56,8 @@ resource "aws_db_instance" "rds_postgres" {
   instance_class         = "db.t3.micro"
   allocated_storage      = 20
   storage_type           = "gp2"
-  username               = var.db_username
-  password               = var.db_password
+  username               = var.DB_USERNAME
+  password               = var.DB_PASSWORD
   parameter_group_name   = "default.postgres17"
   publicly_accessible    = false
   vpc_security_group_ids = [aws_security_group.rds_sg.id]
