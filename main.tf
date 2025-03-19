@@ -2,8 +2,8 @@ provider "aws" {
   region = "us-east-1"
 }
 
-variable "db_password" {}
-variable "db_username" {}
+variable "DB_PASSWORD" {}
+variable "DB_USERNAME" {}
 
 data "aws_vpc" "selected" {
   filter {
