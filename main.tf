@@ -5,13 +5,27 @@ provider "aws" {
 variable "db_password" {}
 variable "db_username" {}
 
+data "aws_vpc" "selected" {
+  filter {
+    name   = "tag:Name"
+    values = ["tech-challenge-vpc-vpc"]  # Nome da VPC específica
+  }
+}
+
+data "aws_subnets" "selected" {
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.selected.id]
+  }
+}
+
 data "aws_rds_engine_version" "latest_postgres" {
   engine = "postgres"
 }
 
 resource "aws_db_subnet_group" "rds_subnet_group" {
   name       = "rds-subnet-group"
-  subnet_ids = ["subnet-01b2e6b2e09d027ef", "subnet-0797fb80dfa8687ca", "subnet-03b99aa79b311a576"]
+  subnet_ids = data.aws_subnets.selected.ids
 
   tags = {
     Name = "RDS Subnet Group"
@@ -21,7 +35,7 @@ resource "aws_db_subnet_group" "rds_subnet_group" {
 resource "aws_security_group" "rds_sg" {
   name        = "rds-tech-challenge-security-group"
   description = "Permitir acesso ao RDS na VPC"
-  vpc_id      = "vpc-083f9edebc07bdbc6"
+  vpc_id      = data.aws_vpc.selected.id
 
   ingress {
     from_port   = 5432
