@@ -8,7 +8,7 @@ variable "DB_USERNAME" {}
 data "aws_vpc" "selected" {
   filter {
     name   = "tag:Name"
-    values = ["tech-challenge-vpc-vpc"]  # Nome da VPC específica
+    values = ["tech-challenge-vpc"]  # Nome da VPC específica
   }
 }
 
