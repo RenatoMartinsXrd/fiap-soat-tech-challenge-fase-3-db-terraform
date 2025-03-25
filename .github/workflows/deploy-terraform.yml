@@ -50,7 +50,6 @@ jobs:
           -backend-config="key=state-terraform-db/terraform.tfstate" \
           -backend-config="region=us-east-1" \
           -backend-config="encrypt=true"
-        working-directory: terraform-eks
 
       - name: Validar Terraform
         run: terraform validate
@@ -88,7 +87,6 @@ jobs:
           -backend-config="key=state-terraform-db/terraform.tfstate" \
           -backend-config="region=us-east-1" \
           -backend-config="encrypt=true"
-        working-directory: terraform-eks
 
       - name: Aplicar Terraform
         run: |
