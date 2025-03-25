@@ -2,6 +2,13 @@ provider "aws" {
   region = "us-east-1"
 }
 
+terraform {
+  backend "s3" {
+   region = "us-east-1"
+   key    = "state-terraform-db.tfstate"
+  }
+}
+
 variable "DB_PASSWORD" {}
 variable "DB_USERNAME" {}
 
