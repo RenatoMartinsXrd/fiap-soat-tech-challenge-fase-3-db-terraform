@@ -6,7 +6,7 @@ on:
       confirmation:
         description: 'Confirme a destruição dos recursos'
         required: true
-        default: 'no'
+        default: 'yes'  # Agora o valor padrão é 'yes'
         type: string
 
 permissions:
@@ -42,9 +42,5 @@ jobs:
 
       - name: Destruir Infraestrutura
         run: |
-          if [ "${{ github.event.inputs.confirmation }}" == "yes" ]; then
-            terraform destroy -auto-approve -var="DB_USERNAME=${{ secrets.TF_VAR_DB_USERNAME }}" -var="DB_PASSWORD=${{ secrets.TF_VAR_DB_PASSWORD }}"
-          else
-            echo "Destruição abortada. Confirmação não recebida."
-            exit 1
-          fi
+          echo "Destruindo infraestrutura"
+          terraform destroy -auto-approve -var="DB_USERNAME=${{ secrets.TF_VAR_DB_USERNAME }}" -var="DB_PASSWORD=${{ secrets.TF_VAR_DB_PASSWORD }}"
