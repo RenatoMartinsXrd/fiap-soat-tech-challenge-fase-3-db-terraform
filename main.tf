@@ -32,6 +32,13 @@ resource "aws_db_subnet_group" "rds_subnet_group" {
   }
 }
 
+data "aws_security_group" "eks_sg" {
+  filter {
+    name   = "tag:Name"
+    values = ["eks-cluster-sg"]  # Nome fixo do Security Group do EKS
+  }
+}
+
 resource "aws_security_group" "rds_sg" {
   name        = "rds-tech-challenge-security-group"
   description = "Permitir acesso ao RDS na VPC"
@@ -47,6 +54,15 @@ resource "aws_security_group" "rds_sg" {
   tags = {
     Name = "RDS Security Group"
   }
+}
+
+resource "aws_security_group_rule" "allow_eks_to_rds" {
+  type                     = "ingress"
+  from_port                = 5432
+  to_port                  = 5432
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.rds_sg.id
+  source_security_group_id = data.aws_security_group.eks_sg.id
 }
 
 resource "aws_db_instance" "rds_postgres" {
