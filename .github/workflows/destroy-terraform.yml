@@ -34,8 +34,14 @@ jobs:
         with:
           terraform_version: latest
 
-      - name: Inicializar Terraform
-        run: terraform init
+      - name: Inicializar Terraform com Backend S3
+        run: |
+          terraform init \
+          -backend-config="bucket=${{ secrets.S3_BUCKET }}" \
+          -backend-config="key=state/terraform.tfstate" \
+          -backend-config="region=us-east-1" \
+          -backend-config="encrypt=true"
+        working-directory: terraform-eks
 
       - name: Validar Terraform
         run: terraform validate
