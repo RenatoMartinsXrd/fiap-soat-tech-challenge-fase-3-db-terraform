@@ -81,3 +81,4 @@ resource "aws_db_instance" "rds_postgres" {
   skip_final_snapshot    = true
 }
 
+
