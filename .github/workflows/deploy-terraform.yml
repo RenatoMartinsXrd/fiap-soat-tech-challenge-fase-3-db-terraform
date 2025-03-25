@@ -47,7 +47,7 @@ jobs:
         run: |
           terraform init \
           -backend-config="bucket=${{ secrets.S3_BUCKET }}" \
-          -backend-config="key=state/terraform.tfstate" \
+          -backend-config="key=state-terraform-db/terraform.tfstate" \
           -backend-config="region=us-east-1" \
           -backend-config="encrypt=true"
         working-directory: terraform-eks
@@ -85,7 +85,7 @@ jobs:
         run: |
           terraform init \
           -backend-config="bucket=${{ secrets.S3_BUCKET }}" \
-          -backend-config="key=state/terraform.tfstate" \
+          -backend-config="key=state-terraform-db/terraform.tfstate" \
           -backend-config="region=us-east-1" \
           -backend-config="encrypt=true"
         working-directory: terraform-eks
