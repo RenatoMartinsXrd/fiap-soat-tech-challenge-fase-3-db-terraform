@@ -3,12 +3,12 @@ name: Deploy Terraform Infra
 on:
   push:
     branches:
-      - master
-    paths: ["**/*.tf"]  # Gatilho para alterações em arquivos Terraform
+      - main
+    paths: ["**/*.tf"]
   pull_request:
     branches:
-      - master
-    paths: ["**/*.tf"]  # Gatilho para alterações em arquivos Terraform
+      - main
+    paths: ["**/*.tf"]
   workflow_dispatch:
 
 permissions:
@@ -31,32 +31,33 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Verificar variáveis de ambiente
-        run: |
-          echo "AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID"
-          echo "AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY"
-          echo "DB_USERNAME: $DB_USERNAME"
-          echo "DB_PASSWORD: $DB_PASSWORD"
-
       - name: Instalar Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: latest
 
-      - name: Inicializar Terraform
-        run: terraform init
+      - name: Inicializar Terraform com Backend S3
+        run: |
+          terraform init \
+            -backend-config="bucket=${{ secrets.AWS_S3_BUCKET }}" \
+            -backend-config="key=state/terraform.tfstate" \
+            -backend-config="region=us-east-1" \
+            -backend-config="encrypt=true" \
+            -backend-config="dynamodb_table=${{ secrets.AWS_DYNAMODB_TABLE }}"
+        working-directory: terraform-eks
 
       - name: Validar Terraform
         run: terraform validate
+        working-directory: terraform-eks
 
       - name: Planejar Terraform
-        run: |
-          terraform plan -var="DB_USERNAME=${{ secrets.TF_VAR_DB_USERNAME }}" -var="DB_PASSWORD=${{ secrets.TF_VAR_DB_PASSWORD }}"
+        run: terraform plan
+        working-directory: terraform-eks
 
   deploy:
     name: Terraform Deploy
     needs: plan
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/main' 
     runs-on: ubuntu-latest
 
     steps:
@@ -75,9 +76,16 @@ jobs:
         with:
           terraform_version: latest
 
-      - name: Inicializar Terraform
-        run: terraform init
+      - name: Inicializar Terraform com Backend S3
+        run: |
+          terraform init \
+            -backend-config="bucket=${{ secrets.AWS_S3_BUCKET }}" \
+            -backend-config="key=state/terraform.tfstate" \
+            -backend-config="region=us-east-1" \
+            -backend-config="encrypt=true" \
+            -backend-config="dynamodb_table=${{ secrets.AWS_DYNAMODB_TABLE }}"
+        working-directory: terraform-eks
 
       - name: Aplicar Terraform
-        run: |
-          terraform apply -auto-approve -var="DB_USERNAME=${{ secrets.TF_VAR_DB_USERNAME }}" -var="DB_PASSWORD=${{ secrets.TF_VAR_DB_PASSWORD }}"
+        run: terraform apply -auto-approve
+        working-directory: terraform-eks
